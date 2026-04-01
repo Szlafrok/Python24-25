@@ -8,10 +8,12 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
  
 screen_surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
-pygame.display.set_caption('Pierwsza Gra') # Nadanie nazwy oknu
+# Nadanie nazwy oknu
+pygame.display.set_caption('Pierwsza Gra')
  
-clock = pygame.time.Clock() # Utworzenie zegara, który nadzoruje stałe wartości fps
+# Utworzenie zegara, który nadzoruje stałe wartości fps
+clock = pygame.time.Clock()
+ 
  
 def load_image(img_path: str, position):
     image = pygame.image.load(img_path)
@@ -19,27 +21,32 @@ def load_image(img_path: str, position):
  
     transparent_color = (0, 0, 0)
     surface.set_colorkey(transparent_color)
-
-    rect = surface.get_rect(center=position) # Pozycja wyświetlania obiektu zapisana jest w rect
+ 
+    # Pozycja wyświetlania obiektu zapisana jest w rect
+    rect = surface.get_rect(center=position)
  
     return [image, surface, rect]
  
  
 def print_image(img_list) -> None:
-    #img_list: [image, surface, rect]
+    # [image, surface, rect]
     image, surface, rect = img_list
     screen_surface.blit(surface, rect)
-    return
-
+    pass
+ 
+ 
 def set_position_image(img_list, position):
     image, surface, rect = img_list
     rect = surface.get_rect(center=position)
     return [image, surface, rect]
-
-def calculate_player_movement(keys): # Poruszanie postacią
+ 
+ 
+def calculate_player_movement(keys):
+    # Poruszanie postacią
     speed = 10
     delta_x = 0
     delta_y = 0
+ 
     if keys[pygame.K_w]:
         delta_y -= speed
     if keys[pygame.K_s]:
@@ -48,34 +55,65 @@ def calculate_player_movement(keys): # Poruszanie postacią
         delta_x += speed
     if keys[pygame.K_a]:
         delta_x -= speed
+ 
     return [delta_x, delta_y]
-
-################################################
-
+ 
+ 
+def limit_position(position):
+    x, y = position
+    x = max(0, min(x, SCREEN_WIDTH))
+    y = max(0, min(y, SCREEN_HEIGHT))
+    return [x, y]
+ 
+ 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 player_pos = [SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2]
 player = load_image('Lekcja12/grafiki/player.png', player_pos)
+background_color = [9, 42, 121]
  
-
-game_status = True # Flag określająca, czy należy zamknąć okno
-
-while game_status: # Kod wykonywany póki aplikacja jest uruchomiona
-
-    events = pygame.event.get() # Odczytanie zdarzeń zarejestrowanych przez komputer
+ 
+# Zmienna określająca, czy należy zamknąć okno
+game_status = True
+# Kod wykonywany póki aplikacja jest uruchomiona
+while game_status:
+ 
+    # Odczytanie zdarzeń zarejestrowanych przez komputer
+    events = pygame.event.get()
+ 
     for event in events:
-        if event.type == pygame.QUIT: # Naciśnięto X - zamykanie aplikacji
+        # Naciśnięto X - zamykanie aplikacji
+        if event.type == pygame.QUIT:
             game_status = False
+        pass  # for event
  
     pressed_keys = pygame.key.get_pressed()
-
-    print_image(player) # Wyświetl gracza
-    
-    pygame.display.update() # Odświeżenie wyświetlanego okna
+ 
+    delta_x, delta_y = calculate_player_movement(pressed_keys)
+ 
+    # Zmiana wartości współrzędnych
+    player_pos[0] += delta_x
+    player_pos[1] += delta_y
+    # Sprawdzenie limitów współrzędnych
+    player_pos = limit_position(player_pos)
+ 
+    # Zmiana współrzędnych obrazu
+    player = set_position_image(player, player_pos)
+ 
+    # Uzupełnij tło
+    screen_surface.fill(background_color)
+    # Wyświetl gracza
+    print_image(player)
+ 
+    # Odświeżenie wyświetlanego okna
+    pygame.display.update()
  
     clock.tick(60)
+    pass
  
 print("Zamykanie aplikacji")
-
-pygame.quit() # Zamknięcie aplikacji
-quit() # Zamknięcie skryptu
-
-
+# Zamknięcie aplikacji
+pygame.quit()
+# Zamknięcie skryptu
+quit()
+ 
+ 

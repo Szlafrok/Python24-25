@@ -1,0 +1,12 @@
+import requests
+from pprint import pprint
+
+API_KEY = "cd5b3262f4a1a6071dcf78eba8229b22"
+
+def check_coordinates(city, API_KEY):
+    response = requests.get(f"http://api.openweathermap.org/geo/1.0/direct?q={city}&appid={API_KEY}")
+    print(response.status_code)
+    pprint(response.json())
+
+city = input("Wprowadź miasto: ")
+check_coordinates(city, API_KEY)
